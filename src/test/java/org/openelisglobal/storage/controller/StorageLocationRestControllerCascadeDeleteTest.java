@@ -52,6 +52,8 @@ public class StorageLocationRestControllerCascadeDeleteTest extends BaseWebConte
         try {
             jdbcTemplate.execute("DELETE FROM sample_storage_assignment WHERE id >= 10000");
             jdbcTemplate.execute("DELETE FROM sample_storage_movement WHERE id >= 10000");
+            jdbcTemplate.execute("DELETE FROM sample_item WHERE id >= 10000");
+            jdbcTemplate.execute("DELETE FROM sample WHERE id >= 10000");
             jdbcTemplate.execute("DELETE FROM storage_rack WHERE id >= 10000");
             jdbcTemplate.execute("DELETE FROM storage_shelf WHERE id >= 10000");
             jdbcTemplate.execute("DELETE FROM storage_device WHERE id >= 10000");
