@@ -34,6 +34,9 @@
 
   <!-- Add device connectivity fields for network-connected storage equipment -->
   <include relativeToChangelogFile="true" file="../storage/storage-device-connectivity.xml"/>
+  
+  <!-- Add storage subnav items for sample items and locations tabs -->
+  <include relativeToChangelogFile="true" file="../storage/001-add-storage-subnav-items.xml"/>
 
   <!-- Patient Merge (008-patient-merge) -->
   <include relativeToChangelogFile="true" file="019-patient-merge-create-audit-table.xml"/>

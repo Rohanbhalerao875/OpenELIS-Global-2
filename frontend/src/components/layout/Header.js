@@ -430,7 +430,8 @@ function OEHeader({
       // Instead, use expanded state to show which parent has active children.
       const carbonIsActive = isLeafActive; // Only true if this parent item's own path matches
       // Use controlled expanded prop instead of defaultExpanded to ensure proper collapse behavior
-      const carbonExpanded = !!menuItem.expanded ||
+      const carbonExpanded =
+        !!menuItem.expanded ||
         hasActiveChild ||
         (defaultMode === SIDENAV_MODES.LOCK && hasActiveChild);
       return (
