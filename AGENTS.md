@@ -1916,3 +1916,53 @@ sdk env        # SDKMAN auto-switch
 **Last Updated:** 2025-12-04 **Constitution Version:** 1.8.0 **Maintained By:**
 OpenELIS Global Core Team **Questions?** Post in GitHub Discussions or weekly
 developer sync
+
+---
+
+## Cursor Cloud specific instructions
+
+### Environment overview
+
+OpenELIS Global 2 runs as a multi-container Docker Compose stack via
+`dev.docker-compose.yml`. The key services are: PostgreSQL 14 (database),
+Tomcat 10 webapp (backend WAR), React dev server (frontend), HAPI FHIR R4
+server, Nginx reverse proxy, and a one-shot cert generator.
+
+### Starting services
+
+```bash
+# Start all dev containers (backend uses pre-built image + locally built WAR)
+docker compose -f dev.docker-compose.yml up -d
+
+# The webapp takes ~90s to fully initialize (Liquibase migrations + Spring context)
+# Monitor with: docker logs -f openelisglobal-webapp
+```
+
+**Access:** `https://localhost/` (React UI), `https://localhost/api/OpenELIS-Global/` (Legacy UI).
+Default credentials: `admin` / `adminADMIN!`
+
+### Docker-in-Docker (DinD) caveats
+
+The Cloud Agent VM runs inside a container, so Docker requires extra setup:
+- `fuse-overlayfs` storage driver (configured in `/etc/docker/daemon.json`)
+- `iptables-legacy` (kernel doesn't support nftables)
+- Docker daemon started with `sudo dockerd &>/tmp/dockerd.log &`
+- After starting, run `sudo chmod 666 /var/run/docker.sock` for non-root access
+
+### Key development commands
+
+All standard commands are documented in `AGENTS.md` Development Workflow and
+`README.md`. Notable gotchas:
+
+- **Backend rebuild:** `mvn clean install -DskipTests -Dmaven.test.skip=true`
+  then `docker compose -f dev.docker-compose.yml up -d --no-deps --force-recreate oe.openelis.org`
+- **Frontend hot reload:** Changes in `frontend/src/` are volume-mounted into
+  the container and auto-reload
+- **Node.js version:** `.nvmrc` specifies Node 20; use `nvm use 20`
+- **Submodules:** `dataexport` must be built before the main project
+
+### Pre-existing test failures
+
+As of the current branch, `mvn test` shows 13 pre-existing failures out of 2478
+tests (PatientMergeRestControllerTest, StorageDashboardRestControllerTest,
+SampleTypeCreateServiceTest). These are not caused by environment setup.
